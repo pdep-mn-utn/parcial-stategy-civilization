@@ -1,5 +1,6 @@
 # Strategy Civilization
-
+[![build](https://github.com/pdep-mn-utn/parcial-stategy-civilization/actions/workflows/build.yml/badge.svg)](https://github.com/pdep-mn-utn/parcial-stategy-civilization/actions/workflows/build.yml)
+ 
 ¡Es hora de jugar! vamos a realizar el modelado de un juego de estrategia para divertirnos con amigos. 
 
 ## Descripción del dominio
