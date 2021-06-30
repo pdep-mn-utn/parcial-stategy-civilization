@@ -1,21 +1,23 @@
 module Library where
 import PdePreludat
 
+type Potencio = Number
+type Defensio = Number
+
 data Unidad = Unidad {
   tipo :: String,
-  nivelDeAtaque :: Number,
+  nivelDeAtaque :: Potencio,
   herramientas :: [Herramienta]
 } deriving (Show)
 
 type Denominacion = String 
-type Poder = Number
-type Herramienta = (Denominacion, Poder)
+type Herramienta = (Denominacion, Potencio)
 denominacion = fst
 poder = snd
 
 data Ciudad = Ciudad { 
   nombre :: String,
-  nivelDeDefensa :: Number,
+  nivelDeDefensa :: Defensio,
   unidades :: [Unidad],
   sistemasDeDefensa :: [SistemaDeDefensa]
 } deriving (Show)
@@ -24,24 +26,24 @@ type SistemaDeDefensa = Ciudad -> Ciudad
 
 
 -- Puno 1
-tiposGrosos:: Ciudad -> [String]
-tiposGrosos = map tipo.filter ((>160).nivelDeAtaque).unidades
+unidadesGrosas:: Ciudad -> [String]
+unidadesGrosas = map tipo.filter ((>160).nivelDeAtaque).unidades
 
 ataquePoderoso :: Ciudad -> Bool
 ataquePoderoso = all((>100).nivelDeAtaque). take 3.unidades
 
-poderTotalDeHerramientas :: Unidad -> Poder 
+poderTotalDeHerramientas :: Unidad -> Potencio 
 poderTotalDeHerramientas = sum.map poder. herramientas 
 
 -- Punto 2
 
-poderOfensivo:: Unidad -> Poder 
+poderOfensivo:: Unidad -> Potencio 
 poderOfensivo guerrero 
  | ((>5).length.herramientas) guerrero = 100 + ataqueTotal guerrero 
  | ((=="caballeria").tipo) guerrero = ataqueTotal guerrero * 2
  | otherwise = ataqueTotal guerrero
 
-ataqueTotal :: Unidad -> Poder
+ataqueTotal :: Unidad -> Potencio
 ataqueTotal guerrero = nivelDeAtaque guerrero + poderTotalDeHerramientas guerrero 
 
 -- Punto 3
@@ -55,10 +57,10 @@ sobreviveElBatallon (defensor:defensores) (atacante:atacantes)
  | otherwise = sobreviveElBatallon defensores (atacante:atacantes)
 
 -- Punto 4
-aumentarnivelDeDefensa :: Number -> SistemaDeDefensa
+aumentarnivelDeDefensa :: Defensio -> SistemaDeDefensa
 aumentarnivelDeDefensa cantidad ciudad = ciudad {nivelDeDefensa = nivelDeDefensa ciudad + cantidad}
 
-muralla :: Number -> SistemaDeDefensa
+muralla :: Defensio -> SistemaDeDefensa
 muralla altura ciudad = aumentarnivelDeDefensa (altura * 3) ciudad {
   nombre = "La gran " ++ nombre ciudad
 }
@@ -66,21 +68,21 @@ muralla altura ciudad = aumentarnivelDeDefensa (altura * 3) ciudad {
 torresDeVigilancia:: SistemaDeDefensa
 torresDeVigilancia = aumentarnivelDeDefensa 40
 
-centroEntrenamiento :: Number -> SistemaDeDefensa
+centroEntrenamiento :: Potencio -> SistemaDeDefensa
 centroEntrenamiento incremento ciudad = aumentarnivelDeDefensa 10 ciudad{
   unidades = map (incrementarPoderAtaque incremento).unidades $ ciudad
 }
 
-incrementarPoderAtaque:: Number -> Unidad -> Unidad
+incrementarPoderAtaque:: Potencio -> Unidad -> Unidad
 incrementarPoderAtaque incremento unidad = unidad {nivelDeAtaque = nivelDeAtaque unidad + incremento}
 
 
 -- Punto 5
 
-poderDefensivo :: Ciudad -> Number 
+poderDefensivo :: Ciudad -> Defensio 
 poderDefensivo ciudad = nivelDeDefensa.foldr ($) ciudad $ sistemasDeDefensa ciudad 
 
-poderResultante:: Number
+poderResultante:: Defensio
 poderResultante = poderDefensivo $ Ciudad "Persepolis" 10 [] [muralla 5, centroEntrenamiento 15, torresDeVigilancia]
 
 
@@ -88,7 +90,7 @@ poderResultante = poderDefensivo $ Ciudad "Persepolis" 10 [] [muralla 5, centroE
 sobreviveCiudad :: Ciudad -> Batallon -> Bool 
 sobreviveCiudad ciudad batallon = sobreviveElBatallon (unidades ciudad) batallon || poderDefensivo ciudad > poderAtaqueBatallon batallon
 
-poderAtaqueBatallon :: Batallon -> Number
+poderAtaqueBatallon :: Batallon -> Potencio
 poderAtaqueBatallon = sum.map poderOfensivo
 
 --Punto 7 
