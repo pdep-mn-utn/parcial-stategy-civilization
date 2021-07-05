@@ -116,7 +116,7 @@ instalarBancos = id
 -- Dar un ejemplo de cómo se invocará a la ciudad Persepolis con un nivel de defensa de 10, sin batallón de defensa pero con una muralla de 5 metros, 
 -- un centro de entrenamiento de 15 "defensios" adicionales para las unidades del batallón y una torre de vigilancia.
 poderDefensivo :: Ciudad -> Defensio 
-poderDefensivo ciudad = nivelDeDefensa.foldr ($) ciudad $ sistemasDeDefensa ciudad 
+poderDefensivo ciudad = nivelDeDefensa.foldr ($) ciudad . sistemasDeDefensa $ ciudad 
 
 poderResultante:: Defensio
 poderResultante = poderDefensivo $ Ciudad "Persepolis" 10 [] [muralla 5, centroEntrenamiento 15, torresDeVigilancia]
